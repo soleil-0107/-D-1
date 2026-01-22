@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>可愛互動頁</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    height: 100vh;
+    margin: 0;
+    background: #f7f7f7;
+    overflow: hidden;
+    font-family: sans-serif;
+    touch-action: none;
+  }
+
+  .box {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  button {
+    padding: 14px 28px;
+    font-size: 18px;
+    margin: 0 16px;
+    border-radius: 10px;
+    border: none;
+  }
+
+  #agree { background: #ffd6e7; }
+  #reject { background: #eee; position: absolute; }
+
+  /* 表情本體 */
+  #face {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  }
+
+  .eyes {
+    position: absolute;
+    top: 22px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .eye {
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    transition: transform 0.1s;
+  }
+
+  .mouth {
+    position: absolute;
+    bottom: 14px;
+    font-size: 14px;
+  }
+
+  .shake {
+    animation: shake 0.2s infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(0,0); }
+    50% { transform: translate(2px,-2px); }
+    100% { transform: translate(0,0); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <button id="agree">同意</button>
+  <button id="reject">拒絕</button>
+</div>
+
+<div id="face">
+  <div class="eyes">
+    <div class="eye"></div>
+    <div class="eye"></div>
+  </div>
+  <div class="mouth">︶</div>
+</div>
+
+<script>
+const face = document.getElementById("face");
+const eyes = document.querySelectorAll(".eye");
+const mouth = document.querySelector(".mouth");
+const agree = document.getElementById("agree");
+const reject = document.getElementById("reject");
+
+function move(e) {
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+  face.style.left = x + 10 + "px";
+  face.style.top = y + 10 + "px";
+
+  const dReject = dist(x, y, reject);
+  const dAgree = dist(x, y, agree);
+
+  face.className = "";
+
+  // 眼睛看向拒絕鍵
+  if (dReject < 160) {
+    const r = reject.getBoundingClientRect();
+    const dir = r.left < x ? -3 : 3;
+    eyes.forEach(e => e.style.transform = `translateX(${dir}px)`);
+  } else {
+    eyes.forEach(e => e.style.transform = "translateX(0)");
+  }
+
+  if (dReject < 80) {
+    face.classList.add("shake");
+    mouth.textContent = "﹏";
+  } else if (dAgree < 80) {
+    mouth.textContent = "︶";
+  } else {
+    mouth.textContent = "︶";
+  }
+}
+
+document.addEventListener("mousemove", move);
+document.addEventListener("touchmove", move);
+
+reject.addEventListener("click", () => {
+  const x = Math.random() * (window.innerWidth - 120);
+  const y = Math.random() * (window.innerHeight - 120);
+  reject.style.left = x + "px";
+  reject.style.top = y + "px";
+});
+
+function dist(x, y, el) {
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  return Math.hypot(x - cx, y - cy);
+}
+</script>
+
+</body>
+</html>

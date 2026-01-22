@@ -170,7 +170,7 @@ function updateFace(e){
 document.addEventListener("mousemove", updateFace);
 document.addEventListener("touchmove", updateFace);
 
-// 拒絕鍵逃跑 + 按下後顯示文字
+// 拒絕鍵逃跑 + 按下後顯示文字五秒
 reject.addEventListener("click", ()=>{
   rejectClicks++;
   if(rejectClicks>=1){
@@ -178,6 +178,11 @@ reject.addEventListener("click", ()=>{
     const rect = reject.getBoundingClientRect();
     rejectMsg.style.left = rect.left - 20 + "px";
     rejectMsg.style.top = rect.top - 80 + "px"; // 上移文字，不被表情擋到
+
+    // 文字五秒後消失
+    setTimeout(()=>{
+      rejectMsg.style.display="none";
+    }, 5000);
   }
 
   // 逃跑，用 transform

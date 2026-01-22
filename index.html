@@ -6,99 +6,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
-  height: 100vh;
-  margin: 0;
-  background: #fdf6f0;
-  font-family: 'Microsoft JhengHei', sans-serif;
-  overflow: hidden;
-  touch-action: none;
+  margin:0;
+  padding:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  background:#fdf6f0;
+  font-family:'Microsoft JhengHei',sans-serif;
+  overflow:hidden;
 }
 
 h2 {
-  color: #ff5e9c;
-  margin: 20px;
-  text-align: center;
-  font-size: 32px;
+  margin:20px;
+  color:#ff5e9c;
+  font-size:32px;
 }
 
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 150px;
-  position: relative;
-  width: 100%;
-  height: 100%;
+  display:flex;
+  justify-content:space-around;
+  width:100%;
+  max-width:500px;
+  margin-top:200px;
+  position:relative;
 }
 
 button {
-  padding: 14px 28px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  position: relative; /* 初始固定，不會不見 */
-  z-index: 5;
+  padding:14px 28px;
+  font-size:18px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  transition: transform 0.2s;
 }
 
-#agree { background: #ffd6e7; }
-#reject { background: #eee; }
+#agree { background:#ffd6e7; }
+#reject { background:#eee; }
 
 #face {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
-  top: 200px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  transition: all 0.1s;
+  position:absolute;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  background:#fff;
+  top:150px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  z-index:10;
 }
 
-.eyes { position: absolute; top: 30px; display: flex; gap: 15px; }
-.eye { width: 12px; height: 12px; background: #000; border-radius: 50%; transition: transform 0.1s; }
-.mouth { position: absolute; bottom: 20px; font-size: 18px; transition: all 0.1s; }
-.shake { animation: shake 0.2s infinite; }
+.eyes { position:absolute; top:30px; display:flex; gap:15px; }
+.eye { width:12px; height:12px; background:#000; border-radius:50%; transition:transform 0.1s; }
+.mouth { position:absolute; bottom:20px; font-size:18px; transition: all 0.1s; }
+.shake { animation:shake 0.2s infinite; }
 
 @keyframes shake {
-  0% { transform: translate(0,0); }
-  50% { transform: translate(3px,-3px); }
-  100% { transform: translate(0,0); }
+  0% {transform:translate(0,0);}
+  50% {transform:translate(3px,-3px);}
+  100% {transform:translate(0,0);}
 }
 
-.confetti { position: absolute; width: 8px; height: 8px; opacity: 0.8; pointer-events: none; animation: fall 2s linear forwards; }
+.confetti { position:absolute; width:8px; height:8px; opacity:0.8; pointer-events:none; animation:fall 2s linear forwards; }
 @keyframes fall {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+  0% { transform: translateY(0) rotate(0deg);}
+  100% { transform: translateY(400px) rotate(360deg); opacity:0;}
 }
 
 #celebrate {
-  position: absolute;
-  top: 120px;
-  font-size: 28px;
-  color: #1e90ff;
-  font-family: 'Comic Sans MS', cursive;
-  font-weight: bold;
-  display: none;
-  pointer-events: none;
-  text-shadow: 1px 1px 2px #aaa;
+  position:absolute;
+  top:120px;
+  font-size:28px;
+  color:#1e90ff;
+  font-family:'Comic Sans MS',cursive;
+  font-weight:bold;
+  display:none;
+  pointer-events:none;
+  text-shadow:1px 1px 2px #aaa;
 }
 
 #rejectMsg {
-  position: absolute;
-  font-size: 24px;
-  color: #ff3b3b;
-  font-family: 'Comic Sans MS', cursive;
-  font-weight: bold;
-  display: none;
-  pointer-events: none;
-  text-shadow: 1px 1px 2px #aaa;
+  position:absolute;
+  font-size:24px;
+  color:#ff3b3b;
+  font-family:'Comic Sans MS',cursive;
+  font-weight:bold;
+  display:none;
+  pointer-events:none;
+  text-shadow:1px 1px 2px #aaa;
 }
 </style>
 </head>
@@ -125,15 +125,11 @@ button {
 
 <script>
 const face = document.getElementById("face");
-const eyes = document.querySelectorAll(".eye");
 const mouth = document.querySelector(".mouth");
 const agree = document.getElementById("agree");
 const reject = document.getElementById("reject");
 const celebrate = document.getElementById("celebrate");
 const rejectMsg = document.getElementById("rejectMsg");
-
-const buttonWidth = 100;
-const buttonHeight = 50;
 
 let rejectClicks = 0;
 
@@ -148,22 +144,23 @@ function updateFace(e){
   const distReject = Math.hypot(x - (rejectRect.left + rejectRect.width/2), y - (rejectRect.top + rejectRect.height/2));
   const distAgree = Math.hypot(x - (agreeRect.left + agreeRect.width/2), y - (agreeRect.top + agreeRect.height/2));
 
-  if(distReject < 100 && !(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom)){
+  if(distReject < 100 && !(x>rejectRect.left && x<rejectRect.right && y>rejectRect.top && y<rejectRect.bottom)){
     face.classList.add("shake");
-    mouth.textContent = "﹏"; // 緊張
-  } else if(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom){
-    mouth.textContent = "T_T"; // 哭
-    rejectMsg.style.display = "block";
-    rejectMsg.style.left = (rejectRect.left - 20) + "px";
-    rejectMsg.style.top = (rejectRect.top - 60) + "px";
-  } else if(distAgree < 100){
+    mouth.textContent="﹏"; // 緊張
+  } else if(x>rejectRect.left && x<rejectRect.right && y>rejectRect.top && y<rejectRect.bottom){
     face.classList.remove("shake");
-    mouth.textContent = "︶"; // 笑
-    rejectMsg.style.display = "none";
-  } else{
+    mouth.textContent="T_T"; // 哭
+    rejectMsg.style.display="block";
+    rejectMsg.style.left=(rejectRect.left-20)+"px";
+    rejectMsg.style.top=(rejectRect.top-60)+"px";
+  } else if(distAgree<100){
     face.classList.remove("shake");
-    mouth.textContent = "︶";
-    rejectMsg.style.display = "none";
+    mouth.textContent="︶"; // 笑
+    rejectMsg.style.display="none";
+  } else {
+    face.classList.remove("shake");
+    mouth.textContent="︶";
+    rejectMsg.style.display="none";
   }
 }
 
@@ -171,35 +168,35 @@ document.addEventListener("mousemove", updateFace);
 document.addEventListener("touchmove", updateFace);
 
 // 拒絕鍵逃跑 + 多按才消失
-reject.addEventListener("click", () => {
+reject.addEventListener("click", ()=>{
   rejectClicks++;
-  if(rejectClicks >= 3){
-    reject.style.display = "none";
-    rejectMsg.style.display = "none";
-  } else {
-    reject.style.position = "absolute";
-    const safeX = Math.random() * (window.innerWidth - buttonWidth);
-    const safeY = Math.random() * (window.innerHeight - buttonHeight - 150) + 150;
-    reject.style.left = safeX + "px";
-    reject.style.top = safeY + "px";
+  if(rejectClicks>=3){
+    rejectMsg.style.display="block";
+    rejectMsg.textContent="壞人，我不跟你好 😢";
   }
+  // 只用 transform 移動，不改 absolute
+  const maxX = window.innerWidth - reject.offsetWidth;
+  const maxY = window.innerHeight - reject.offsetHeight - 150;
+  const randX = Math.random()*maxX;
+  const randY = Math.random()*maxY;
+  reject.style.transform=`translate(${randX-reject.offsetLeft}px, ${randY-reject.offsetTop}px)`;
 });
 
 // 同意 → 彩帶 + 文字
-agree.addEventListener("click", () => {
-  celebrate.style.display = "block";
+agree.addEventListener("click", ()=>{
+  celebrate.style.display="block";
   createConfetti();
-  setTimeout(()=> celebrate.style.display = "none", 3000);
+  setTimeout(()=>celebrate.style.display="none",3000);
 });
 
 function createConfetti(){
   for(let i=0;i<50;i++){
-    const confetti = document.createElement("div");
+    const confetti=document.createElement("div");
     confetti.classList.add("confetti");
-    confetti.style.left = Math.random() * window.innerWidth + "px";
-    confetti.style.background = `hsl(${Math.random()*360},80%,60%)`;
+    confetti.style.left=Math.random()*window.innerWidth+"px";
+    confetti.style.background=`hsl(${Math.random()*360},80%,60%)`;
     document.body.appendChild(confetti);
-    setTimeout(()=> confetti.remove(), 2000);
+    setTimeout(()=>confetti.remove(),2000);
   }
 }
 </script>

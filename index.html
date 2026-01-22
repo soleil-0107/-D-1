@@ -54,8 +54,11 @@
     justify-content: center;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0,0,0,.2);
-    pointer-events: none;
+    top: 250px; /* 固定位置，中間偏上 */
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
+    transition: all 0.1s;
   }
 
   .eyes {
@@ -106,7 +109,7 @@
 
   #celebrate {
     position: absolute;
-    top: 100px;
+    top: 120px;
     font-size: 28px;
     color: #1e90ff;
     font-family: 'Comic Sans MS', cursive;
@@ -164,13 +167,10 @@ const buttonHeight = 50;
 // 拒絕鍵需要按 3 次才消失
 let rejectClicks = 0;
 
-// 追蹤滑鼠/手指
-function moveFace(e){
+// 滑鼠靠近表情變化
+function updateFace(e){
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
-
-  face.style.left = (x - 50) + "px"; // 100px 寬
-  face.style.top = (y - 50) + "px";
 
   const rejectRect = reject.getBoundingClientRect();
   const agreeRect = agree.getBoundingClientRect();
@@ -179,29 +179,33 @@ function moveFace(e){
   const distAgree = Math.hypot(x - (agreeRect.left + agreeRect.width/2), y - (agreeRect.top + agreeRect.height/2));
 
   // 靠近拒絕 → 緊張
-  if(distReject < 100){
+  if(distReject < 100 && !(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom)){
     face.classList.add("shake");
     mouth.textContent = "﹏";
-  } else if(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom){
-    // 在拒絕鍵上 → 哭
+  }
+  // 在拒絕鍵上 → 哭
+  else if(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom){
     face.classList.remove("shake");
     mouth.textContent = "T_T";
     rejectMsg.style.display = "block";
     rejectMsg.style.left = (rejectRect.left - 20) + "px";
     rejectMsg.style.top = (rejectRect.top - 60) + "px";
-  } else if(distAgree < 100){
+  }
+  // 靠近同意 → 笑
+  else if(distAgree < 100){
     face.classList.remove("shake");
-    mouth.textContent = "︶"; // 笑
+    mouth.textContent = "︶";
     rejectMsg.style.display = "none";
-  } else {
+  }
+  else{
     face.classList.remove("shake");
     mouth.textContent = "︶";
     rejectMsg.style.display = "none";
   }
 }
 
-document.addEventListener("mousemove", moveFace);
-document.addEventListener("touchmove", moveFace);
+document.addEventListener("mousemove", updateFace);
+document.addEventListener("touchmove", updateFace);
 
 // 拒絕鍵亂跑 + 點幾次才消失
 reject.addEventListener("click", () => {

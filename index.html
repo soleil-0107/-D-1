@@ -133,7 +133,7 @@ const rejectMsg = document.getElementById("rejectMsg");
 
 let rejectClicks = 0;
 
-// 表情靠近按鈕變化
+// 表情靠近按鈕變化（只變表情，不顯示文字）
 function updateFace(e){
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
@@ -150,31 +150,29 @@ function updateFace(e){
   } else if(x>rejectRect.left && x<rejectRect.right && y>rejectRect.top && y<rejectRect.bottom){
     face.classList.remove("shake");
     mouth.textContent="T_T"; // 哭
-    rejectMsg.style.display="block";
-    rejectMsg.style.left=(rejectRect.left-20)+"px";
-    rejectMsg.style.top=(rejectRect.top-60)+"px";
   } else if(distAgree<100){
     face.classList.remove("shake");
     mouth.textContent="︶"; // 笑
-    rejectMsg.style.display="none";
   } else {
     face.classList.remove("shake");
     mouth.textContent="︶";
-    rejectMsg.style.display="none";
   }
 }
 
 document.addEventListener("mousemove", updateFace);
 document.addEventListener("touchmove", updateFace);
 
-// 拒絕鍵逃跑 + 多按才消失
+// 拒絕鍵逃跑 + 多按才顯示文字
 reject.addEventListener("click", ()=>{
   rejectClicks++;
-  if(rejectClicks>=3){
+  if(rejectClicks>=1){
     rejectMsg.style.display="block";
-    rejectMsg.textContent="壞人，我不跟你好 😢";
+    const rect = reject.getBoundingClientRect();
+    rejectMsg.style.left = rect.left - 20 + "px";
+    rejectMsg.style.top = rect.top - 60 + "px";
   }
-  // 只用 transform 移動，不改 absolute
+
+  // 逃跑，用 transform
   const maxX = window.innerWidth - reject.offsetWidth;
   const maxY = window.innerHeight - reject.offsetHeight - 150;
   const randX = Math.random()*maxX;

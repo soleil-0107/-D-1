@@ -10,33 +10,35 @@
     height: 100vh;
     margin: 0;
     background: #fdf6f0;
-    font-family: sans-serif;
+    font-family: 'Microsoft JhengHei', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     overflow: hidden;
     touch-action: none;
   }
 
   h2 {
     color: #ff5e9c;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    font-size: 32px;
   }
 
   .container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 100px; /* 按鈕分開 */
+    gap: 150px; /* 按鈕距離更開 */
     position: relative;
     width: 100%;
+    margin-top: 50px;
   }
 
   button {
     padding: 14px 28px;
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
     position: relative;
@@ -47,30 +49,30 @@
 
   #face {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    top: 200px; /* 畫面中間偏上 */
     left: 50%;
     transform: translateX(-50%);
-    top: 50%;
-    margin-top: -40px;
+    z-index: 1;
   }
 
   .eyes {
     position: absolute;
-    top: 25px;
+    top: 30px;
     display: flex;
-    gap: 12px;
+    gap: 15px;
   }
 
   .eye {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background: #000;
     border-radius: 50%;
     transition: transform 0.1s;
@@ -78,8 +80,8 @@
 
   .mouth {
     position: absolute;
-    bottom: 18px;
-    font-size: 16px;
+    bottom: 20px;
+    font-size: 18px;
   }
 
   .shake {
@@ -92,7 +94,6 @@
     100% { transform: translate(0,0); }
   }
 
-  /* 彩帶效果 */
   .confetti {
     position: absolute;
     width: 8px;
@@ -109,12 +110,14 @@
 
   #celebrate {
     position: absolute;
-    top: 30%;
-    font-size: 26px;
-    color: #ff5e9c;
+    top: 120px; /* 比標題稍微往下 */
+    font-size: 28px;
+    color: #1e90ff; /* 活潑藍色 */
+    font-family: 'Comic Sans MS', cursive;
     font-weight: bold;
     display: none;
     pointer-events: none;
+    text-shadow: 1px 1px 2px #aaa;
   }
 </style>
 </head>
@@ -145,33 +148,43 @@ const agree = document.getElementById("agree");
 const reject = document.getElementById("reject");
 const celebrate = document.getElementById("celebrate");
 
-const faceSize = 80;
+const faceSize = 100;
 const buttonWidth = 100;
 const buttonHeight = 50;
 
-// 表情固定在畫面中間
+// 拒絕鍵需要按 3 次才完全消失
+let rejectClicks = 0;
+
+// 拒絕按鈕亂跑
+reject.addEventListener("click", () => {
+  rejectClicks++;
+  if (rejectClicks >= 3) {
+    reject.style.display = "none";
+  } else {
+    // 慢慢逃跑到畫面內隨機位置
+    const safeX = Math.random() * (window.innerWidth - buttonWidth);
+    const safeY = Math.random() * (window.innerHeight - buttonHeight - 150) + 150;
+    reject.style.position = "absolute";
+    reject.style.left = safeX + "px";
+    reject.style.top = safeY + "px";
+  }
+});
+
+// 表情固定在畫面中央
 const faceX = window.innerWidth / 2 - faceSize/2;
-const faceY = window.innerHeight / 2 - faceSize/2;
+const faceY = 250; // 中間偏上
 face.style.left = faceX + "px";
 face.style.top = faceY + "px";
 
 // 眼睛偷看拒絕鍵
 function checkEyes() {
+  if (reject.style.display === "none") return;
   const r = reject.getBoundingClientRect();
   const dir = r.left + r.width/2 < faceX + faceSize/2 ? -3 : 3;
   eyes.forEach(e => e.style.transform = `translateX(${dir}px)`);
 }
 
 setInterval(checkEyes, 100);
-
-// 拒絕按鈕亂跑
-reject.addEventListener("click", () => {
-  const safeX = Math.random() * (window.innerWidth - buttonWidth);
-  const safeY = Math.random() * (window.innerHeight - buttonHeight);
-  reject.style.position = "absolute";
-  reject.style.left = safeX + "px";
-  reject.style.top = safeY + "px";
-});
 
 // 同意按鈕 → 顯示文字 + 彩帶
 agree.addEventListener("click", () => {
@@ -194,4 +207,5 @@ function createConfetti() {
 
 </body>
 </html>
+
 

@@ -10,60 +10,67 @@
     height: 100vh;
     margin: 0;
     background: #fdf6f0;
-    overflow: hidden;
     font-family: sans-serif;
-    touch-action: none;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
   }
 
   h2 {
-    margin-top: 20px;
     color: #ff5e9c;
+    margin-bottom: 50px;
   }
 
-  .box {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px; /* 按鈕分開 */
     position: relative;
-    margin-top: auto;
-    margin-bottom: 50px;
+    width: 100%;
   }
 
   button {
     padding: 14px 28px;
     font-size: 18px;
-    margin: 0 16px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
+    position: relative;
   }
 
   #agree { background: #ffd6e7; }
-  #reject { background: #eee; position: absolute; }
+  #reject { background: #eee; }
 
   #face {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
     box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
+    margin-top: -40px;
   }
 
   .eyes {
     position: absolute;
-    top: 22px;
+    top: 25px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
   }
 
   .eye {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: #000;
     border-radius: 50%;
     transition: transform 0.1s;
@@ -71,8 +78,8 @@
 
   .mouth {
     position: absolute;
-    bottom: 14px;
-    font-size: 14px;
+    bottom: 18px;
+    font-size: 16px;
   }
 
   .shake {
@@ -81,16 +88,15 @@
 
   @keyframes shake {
     0% { transform: translate(0,0); }
-    50% { transform: translate(2px,-2px); }
+    50% { transform: translate(3px,-3px); }
     100% { transform: translate(0,0); }
   }
 
-  /* 小彩帶效果 */
+  /* 彩帶效果 */
   .confetti {
     position: absolute;
     width: 8px;
     height: 8px;
-    background: red;
     opacity: 0.8;
     pointer-events: none;
     animation: fall 2s linear forwards;
@@ -103,8 +109,8 @@
 
   #celebrate {
     position: absolute;
-    top: 40%;
-    font-size: 24px;
+    top: 30%;
+    font-size: 26px;
     color: #ff5e9c;
     font-weight: bold;
     display: none;
@@ -117,17 +123,16 @@
 
 <h2>學生會離職申請</h2>
 
-<div class="box">
-  <button id="agree">同意</button>
+<div class="container">
   <button id="reject">拒絕</button>
-</div>
-
-<div id="face">
-  <div class="eyes">
-    <div class="eye"></div>
-    <div class="eye"></div>
+  <div id="face">
+    <div class="eyes">
+      <div class="eye"></div>
+      <div class="eye"></div>
+    </div>
+    <div class="mouth">︶</div>
   </div>
-  <div class="mouth">︶</div>
+  <button id="agree">同意</button>
 </div>
 
 <div id="celebrate">好耶，你最好了！🎉</div>
@@ -140,56 +145,35 @@ const agree = document.getElementById("agree");
 const reject = document.getElementById("reject");
 const celebrate = document.getElementById("celebrate");
 
-const faceSize = 60; 
-const buttonWidth = 100; 
-const buttonHeight = 50; 
+const faceSize = 80;
+const buttonWidth = 100;
+const buttonHeight = 50;
 
-// 表情跟隨滑鼠或手指
-function move(e) {
-  const x = e.touches ? e.touches[0].clientX : e.clientX;
-  const y = e.touches ? e.touches[0].clientY : e.clientY;
+// 表情固定在畫面中間
+const faceX = window.innerWidth / 2 - faceSize/2;
+const faceY = window.innerHeight / 2 - faceSize/2;
+face.style.left = faceX + "px";
+face.style.top = faceY + "px";
 
-  const safeX = Math.min(Math.max(x, faceSize/2), window.innerWidth - faceSize/2);
-  const safeY = Math.min(Math.max(y, faceSize/2 + 100), window.innerHeight - faceSize/2);
-
-  face.style.left = safeX + "px";
-  face.style.top = safeY + "px";
-
-  const dReject = dist(safeX, safeY, reject);
-  const dAgree = dist(safeX, safeY, agree);
-
-  face.className = "";
-
-  if (dReject < 160) {
-    const r = reject.getBoundingClientRect();
-    const dir = r.left + r.width/2 < safeX ? -3 : 3;
-    eyes.forEach(e => e.style.transform = `translateX(${dir}px)`);
-  } else {
-    eyes.forEach(e => e.style.transform = "translateX(0)");
-  }
-
-  if (dReject < 80) {
-    face.classList.add("shake");
-    mouth.textContent = "﹏";
-  } else if (dAgree < 80) {
-    mouth.textContent = "︶";
-  } else {
-    mouth.textContent = "︶";
-  }
+// 眼睛偷看拒絕鍵
+function checkEyes() {
+  const r = reject.getBoundingClientRect();
+  const dir = r.left + r.width/2 < faceX + faceSize/2 ? -3 : 3;
+  eyes.forEach(e => e.style.transform = `translateX(${dir}px)`);
 }
 
-document.addEventListener("mousemove", move);
-document.addEventListener("touchmove", move);
+setInterval(checkEyes, 100);
 
 // 拒絕按鈕亂跑
 reject.addEventListener("click", () => {
   const safeX = Math.random() * (window.innerWidth - buttonWidth);
-  const safeY = Math.random() * (window.innerHeight - buttonHeight - 150) + 100;
+  const safeY = Math.random() * (window.innerHeight - buttonHeight);
+  reject.style.position = "absolute";
   reject.style.left = safeX + "px";
   reject.style.top = safeY + "px";
 });
 
-// 同意按鈕 → 顯示文字 + 彩帶效果
+// 同意按鈕 → 顯示文字 + 彩帶
 agree.addEventListener("click", () => {
   celebrate.style.display = "block";
   createConfetti();
@@ -206,15 +190,8 @@ function createConfetti() {
     setTimeout(() => confetti.remove(), 2000);
   }
 }
-
-// 計算距離
-function dist(x, y, el) {
-  const r = el.getBoundingClientRect();
-  const cx = r.left + r.width/2;
-  const cy = r.top + r.height/2;
-  return Math.hypot(x - cx, y - cy);
-}
 </script>
 
 </body>
 </html>
+

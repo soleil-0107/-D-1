@@ -4,131 +4,102 @@
 <meta charset="UTF-8">
 <title>學生會離職申請</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-  body {
-    height: 100vh;
-    margin: 0;
-    background: #fdf6f0;
-    font-family: 'Microsoft JhengHei', sans-serif;
-    overflow: hidden;
-    touch-action: none;
-  }
+body {
+  height: 100vh;
+  margin: 0;
+  background: #fdf6f0;
+  font-family: 'Microsoft JhengHei', sans-serif;
+  overflow: hidden;
+  touch-action: none;
+}
 
-  h2 {
-    color: #ff5e9c;
-    margin: 20px;
-    text-align: center;
-    font-size: 32px;
-  }
+h2 {
+  color: #ff5e9c;
+  margin: 20px;
+  text-align: center;
+  font-size: 32px;
+}
 
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 150px;
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 150px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
-  button {
-    padding: 14px 28px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-  }
+button {
+  padding: 14px 28px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  position: relative; /* 初始固定，不會不見 */
+  z-index: 5;
+}
 
-  #agree { background: #ffd6e7; }
-  #reject { background: #eee; }
+#agree { background: #ffd6e7; }
+#reject { background: #eee; }
 
-  #face {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
-    top: 250px; /* 固定位置，中間偏上 */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    transition: all 0.1s;
-  }
+#face {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: all 0.1s;
+}
 
-  .eyes {
-    position: absolute;
-    top: 30px;
-    display: flex;
-    gap: 15px;
-  }
+.eyes { position: absolute; top: 30px; display: flex; gap: 15px; }
+.eye { width: 12px; height: 12px; background: #000; border-radius: 50%; transition: transform 0.1s; }
+.mouth { position: absolute; bottom: 20px; font-size: 18px; transition: all 0.1s; }
+.shake { animation: shake 0.2s infinite; }
 
-  .eye {
-    width: 12px;
-    height: 12px;
-    background: #000;
-    border-radius: 50%;
-    transition: transform 0.1s;
-  }
+@keyframes shake {
+  0% { transform: translate(0,0); }
+  50% { transform: translate(3px,-3px); }
+  100% { transform: translate(0,0); }
+}
 
-  .mouth {
-    position: absolute;
-    bottom: 20px;
-    font-size: 18px;
-    transition: all 0.1s;
-  }
+.confetti { position: absolute; width: 8px; height: 8px; opacity: 0.8; pointer-events: none; animation: fall 2s linear forwards; }
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+}
 
-  .shake {
-    animation: shake 0.2s infinite;
-  }
+#celebrate {
+  position: absolute;
+  top: 120px;
+  font-size: 28px;
+  color: #1e90ff;
+  font-family: 'Comic Sans MS', cursive;
+  font-weight: bold;
+  display: none;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px #aaa;
+}
 
-  @keyframes shake {
-    0% { transform: translate(0,0); }
-    50% { transform: translate(3px,-3px); }
-    100% { transform: translate(0,0); }
-  }
-
-  .confetti {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    opacity: 0.8;
-    pointer-events: none;
-    animation: fall 2s linear forwards;
-  }
-
-  @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
-  }
-
-  #celebrate {
-    position: absolute;
-    top: 120px;
-    font-size: 28px;
-    color: #1e90ff;
-    font-family: 'Comic Sans MS', cursive;
-    font-weight: bold;
-    display: none;
-    pointer-events: none;
-    text-shadow: 1px 1px 2px #aaa;
-  }
-
-  #rejectMsg {
-    position: absolute;
-    font-size: 24px;
-    color: #ff3b3b;
-    font-family: 'Comic Sans MS', cursive;
-    font-weight: bold;
-    display: none;
-    pointer-events: none;
-    text-shadow: 1px 1px 2px #aaa;
-  }
+#rejectMsg {
+  position: absolute;
+  font-size: 24px;
+  color: #ff3b3b;
+  font-family: 'Comic Sans MS', cursive;
+  font-weight: bold;
+  display: none;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px #aaa;
+}
 </style>
 </head>
 
@@ -164,10 +135,9 @@ const rejectMsg = document.getElementById("rejectMsg");
 const buttonWidth = 100;
 const buttonHeight = 50;
 
-// 拒絕鍵需要按 3 次才消失
 let rejectClicks = 0;
 
-// 滑鼠靠近表情變化
+// 表情靠近按鈕變化
 function updateFace(e){
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
@@ -178,26 +148,19 @@ function updateFace(e){
   const distReject = Math.hypot(x - (rejectRect.left + rejectRect.width/2), y - (rejectRect.top + rejectRect.height/2));
   const distAgree = Math.hypot(x - (agreeRect.left + agreeRect.width/2), y - (agreeRect.top + agreeRect.height/2));
 
-  // 靠近拒絕 → 緊張
   if(distReject < 100 && !(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom)){
     face.classList.add("shake");
-    mouth.textContent = "﹏";
-  }
-  // 在拒絕鍵上 → 哭
-  else if(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom){
-    face.classList.remove("shake");
-    mouth.textContent = "T_T";
+    mouth.textContent = "﹏"; // 緊張
+  } else if(x > rejectRect.left && x < rejectRect.right && y > rejectRect.top && y < rejectRect.bottom){
+    mouth.textContent = "T_T"; // 哭
     rejectMsg.style.display = "block";
     rejectMsg.style.left = (rejectRect.left - 20) + "px";
     rejectMsg.style.top = (rejectRect.top - 60) + "px";
-  }
-  // 靠近同意 → 笑
-  else if(distAgree < 100){
+  } else if(distAgree < 100){
     face.classList.remove("shake");
-    mouth.textContent = "︶";
+    mouth.textContent = "︶"; // 笑
     rejectMsg.style.display = "none";
-  }
-  else{
+  } else{
     face.classList.remove("shake");
     mouth.textContent = "︶";
     rejectMsg.style.display = "none";
@@ -207,13 +170,14 @@ function updateFace(e){
 document.addEventListener("mousemove", updateFace);
 document.addEventListener("touchmove", updateFace);
 
-// 拒絕鍵亂跑 + 點幾次才消失
+// 拒絕鍵逃跑 + 多按才消失
 reject.addEventListener("click", () => {
   rejectClicks++;
   if(rejectClicks >= 3){
     reject.style.display = "none";
     rejectMsg.style.display = "none";
   } else {
+    reject.style.position = "absolute";
     const safeX = Math.random() * (window.innerWidth - buttonWidth);
     const safeY = Math.random() * (window.innerHeight - buttonHeight - 150) + 150;
     reject.style.left = safeX + "px";
@@ -221,7 +185,7 @@ reject.addEventListener("click", () => {
   }
 });
 
-// 同意 → 文字 + 彩帶
+// 同意 → 彩帶 + 文字
 agree.addEventListener("click", () => {
   celebrate.style.display = "block";
   createConfetti();

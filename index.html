@@ -2,25 +2,31 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>可愛互動頁</title>
+<title>學生會離職申請</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
   body {
     height: 100vh;
     margin: 0;
-    background: #f7f7f7;
+    background: #fdf6f0;
     overflow: hidden;
     font-family: sans-serif;
     touch-action: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h2 {
+    margin-top: 20px;
+    color: #ff5e9c;
   }
 
   .box {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 50px;
   }
 
   button {
@@ -29,12 +35,12 @@
     margin: 0 16px;
     border-radius: 10px;
     border: none;
+    cursor: pointer;
   }
 
   #agree { background: #ffd6e7; }
   #reject { background: #eee; position: absolute; }
 
-  /* 表情本體 */
   #face {
     position: absolute;
     width: 60px;
@@ -78,10 +84,38 @@
     50% { transform: translate(2px,-2px); }
     100% { transform: translate(0,0); }
   }
+
+  /* 小彩帶效果 */
+  .confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: red;
+    opacity: 0.8;
+    pointer-events: none;
+    animation: fall 2s linear forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+  }
+
+  #celebrate {
+    position: absolute;
+    top: 40%;
+    font-size: 24px;
+    color: #ff5e9c;
+    font-weight: bold;
+    display: none;
+    pointer-events: none;
+  }
 </style>
 </head>
 
 <body>
+
+<h2>學生會離職申請</h2>
 
 <div class="box">
   <button id="agree">同意</button>
@@ -96,29 +130,39 @@
   <div class="mouth">︶</div>
 </div>
 
+<div id="celebrate">好耶，你最好了！🎉</div>
+
 <script>
 const face = document.getElementById("face");
 const eyes = document.querySelectorAll(".eye");
 const mouth = document.querySelector(".mouth");
 const agree = document.getElementById("agree");
 const reject = document.getElementById("reject");
+const celebrate = document.getElementById("celebrate");
 
+const faceSize = 60; 
+const buttonWidth = 100; 
+const buttonHeight = 50; 
+
+// 表情跟隨滑鼠或手指
 function move(e) {
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
 
-  face.style.left = x + 10 + "px";
-  face.style.top = y + 10 + "px";
+  const safeX = Math.min(Math.max(x, faceSize/2), window.innerWidth - faceSize/2);
+  const safeY = Math.min(Math.max(y, faceSize/2 + 100), window.innerHeight - faceSize/2);
 
-  const dReject = dist(x, y, reject);
-  const dAgree = dist(x, y, agree);
+  face.style.left = safeX + "px";
+  face.style.top = safeY + "px";
+
+  const dReject = dist(safeX, safeY, reject);
+  const dAgree = dist(safeX, safeY, agree);
 
   face.className = "";
 
-  // 眼睛看向拒絕鍵
   if (dReject < 160) {
     const r = reject.getBoundingClientRect();
-    const dir = r.left < x ? -3 : 3;
+    const dir = r.left + r.width/2 < safeX ? -3 : 3;
     eyes.forEach(e => e.style.transform = `translateX(${dir}px)`);
   } else {
     eyes.forEach(e => e.style.transform = "translateX(0)");
@@ -137,17 +181,37 @@ function move(e) {
 document.addEventListener("mousemove", move);
 document.addEventListener("touchmove", move);
 
+// 拒絕按鈕亂跑
 reject.addEventListener("click", () => {
-  const x = Math.random() * (window.innerWidth - 120);
-  const y = Math.random() * (window.innerHeight - 120);
-  reject.style.left = x + "px";
-  reject.style.top = y + "px";
+  const safeX = Math.random() * (window.innerWidth - buttonWidth);
+  const safeY = Math.random() * (window.innerHeight - buttonHeight - 150) + 100;
+  reject.style.left = safeX + "px";
+  reject.style.top = safeY + "px";
 });
 
+// 同意按鈕 → 顯示文字 + 彩帶效果
+agree.addEventListener("click", () => {
+  celebrate.style.display = "block";
+  createConfetti();
+  setTimeout(() => { celebrate.style.display = "none"; }, 3000);
+});
+
+function createConfetti() {
+  for(let i=0; i<50; i++) {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    confetti.style.left = Math.random() * window.innerWidth + "px";
+    confetti.style.background = `hsl(${Math.random()*360}, 80%, 60%)`;
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 2000);
+  }
+}
+
+// 計算距離
 function dist(x, y, el) {
   const r = el.getBoundingClientRect();
-  const cx = r.left + r.width / 2;
-  const cy = r.top + r.height / 2;
+  const cx = r.left + r.width/2;
+  const cy = r.top + r.height/2;
   return Math.hypot(x - cx, y - cy);
 }
 </script>
